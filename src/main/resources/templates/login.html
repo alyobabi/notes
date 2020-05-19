@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Sign in</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body style="background-color:#ffe8ef;">
+<div style="background-color:#ff9cba;height:40px;"></div>
+<div class="container-fluid">
+    <div class="row col-lg-4 col-lg-offset-4"
+         style="margin-top: 80px;background-color:#fff;padding:20px;border:solid 1px #fff000;">
+        <form th:action="@{/login}" method="POST" class="form-signin">
+            <h3 class="form-signin-heading" th:text="Login"></h3>
+            <br/> <input type="text" id="name" name="name" th:placeholder="name" class="form-control"/> <br/> <input
+                type="password" th:placeholder="Password" id="password" name="password" class="form-control"/> <br/>
+
+            <div align="center" th:if="${param.error}">
+                <p style="font-size: 15; color: #ff0000;">Email or Password is invalid</p>
+            </div>
+            <button class="btn btn-primary" name="Submit" value="Login" type="Submit" th:text="Login"
+                    ></button>
+        </form>
+        <form th:action="@{/register}" method="GET" class="form-signin pt-2">
+            <button class="btn btn-success mt-2" name="Submit" value="Register" type="Submit" th:text="Register"
+                    ></button>
+        </form>
+    </div>
+</div>
+</body>
+</html>
