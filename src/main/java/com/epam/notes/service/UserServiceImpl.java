@@ -1,7 +1,8 @@
+/*
 package com.epam.notes.service;
 
 import com.epam.notes.entity.Person;
-import com.epam.notes.repository.UserRepository;
+import com.epam.notes.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,14 +12,15 @@ public class UserServiceImpl implements  UserService{
     @Autowired
     BCryptPasswordEncoder encoder;
     @Autowired
-    UserRepository userRepository;
+    PersonRepository personRepository;
 
     @Override
     public void saveUser(Person person) {
         person.setPassword(encoder.encode(person.getPassword()));
-        userRepository.save(person);
+        personRepository.save(person);
     }
-    /*@Autowired
+    */
+/*@Autowired
     private PersonRepository personRepository;
 
     public User findUserById(Long id) {
@@ -37,6 +39,8 @@ public class UserServiceImpl implements  UserService{
     public Set<Note> getNotesByPerson(Long id) {
         User user = personRepository.getOne(id);
         return user.getNotes();
-    }*/
+    }*//*
+
 
 }
+*/
