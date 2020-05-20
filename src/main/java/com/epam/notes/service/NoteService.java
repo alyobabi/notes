@@ -1,10 +1,12 @@
 package com.epam.notes.service;
 
 import com.epam.notes.entity.Note;
+import com.epam.notes.entity.Person;
 import com.epam.notes.repository.NoteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -15,43 +17,45 @@ import java.util.List;
 public class NoteService {
     @Autowired
     private NoteRepository noteRepository;
+    @Autowired
+    private PersonService personService;
 
     public NoteService(NoteRepository noteRepository) {
         this.noteRepository = noteRepository;
     }
 
-    public void createNote(Note note) {
+    public void createNote(Note note, Authentication authentication) {
+        note.setPerson(personService.getPersonByAuth(authentication));
         note.setDateCreated(LocalDateTime.now());
         note.setDateEdited(LocalDateTime.now());
         note.setDeleted(false);
         noteRepository.save(note);
     }
 
-    public void editNote(Note note) {
+    public void saveNote(Note note, Authentication authentication) {
+        note.setPerson(personService.getPersonByAuth(authentication));
         note.setDateEdited(LocalDateTime.now());
         noteRepository.save(note);
     }
 
-    public void deleteNote(Long id) {
+    public void deleteNote(Long id, Authentication authentication) {
         Note note = noteRepository.getOne(id);
+        note.setPerson(personService.getPersonByAuth(authentication));
         note.setDeleted(true);
         noteRepository.save(note);
     }
 
-    public List<Note> getNotes() {
+    public List<Note> getNotes(Authentication authentication) {
+        noteRepository.findAllByPerson(personService.getPersonByAuth(authentication));
         return noteRepository.findAll();
     }
 
-    public Note getNoteById(Long id) {
-        return noteRepository.getOne(id);
-    }
-
-    public void exportNote(String jsonString) throws Exception {
-        Note note = new Note();
-        note.setTitle(parsing("title", jsonString));
-        note.setText(parsing("text", jsonString));
-        createNote(note);
-    }
+//    public void exportNote(String jsonString) throws Exception {
+//        Note note = new Note();
+//        note.setTitle(parsing("title", jsonString));
+//        note.setText(parsing("text", jsonString));
+//        createNote(note);
+//    }
 
     private String parsing(String name, String jsonString) throws Exception {
         int ind = jsonString.indexOf(name);

@@ -1,46 +1,28 @@
 package com.epam.notes.service;
 
 import com.epam.notes.entity.Person;
+import com.epam.notes.entity.User;
 import com.epam.notes.repository.PersonRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-@Service
-public class UserService {
-    @Autowired
-    BCryptPasswordEncoder encoder;
-    @Autowired
-    PersonRepository personRepository;
+public class UserService implements UserDetailsService {
 
-    public void saveUser(Person person) {
-        person.setPassword(encoder.encode(person.getPassword()));
-        personRepository.save(person);
+    private final PersonRepository personRepository;
+
+    public UserService(PersonRepository personRepository) {
+        this.personRepository = personRepository;
     }
 
-    public Person getPersonByName(String name) {
-        return personRepository.getPersonByName(name);
+    @Override
+    public User loadUserByUsername(String name) throws UsernameNotFoundException {
+        Person person = personRepository.getPersonByName(name);
+        if (name != null) {
+            User user = new User();
+            user.setId(person.getId());
+            user.setName(person.getName());
+            user.setPassword(person.getPassword());
+            return user;
+        } else throw new UsernameNotFoundException(null);
     }
-
-    /*@Autowired
-    private PersonRepository personRepository;
-
-    public User findUserById(Long id) {
-        Optional<User> userFromDb = personRepository.findById(id);
-        return userFromDb.orElse(new User());
-    }
-
-    public void createPerson(User user) {
-        personRepository.save(user);
-    }
-
-    public List<User> getPeople() {
-        return personRepository.findAll();
-    }
-
-    public Set<Note> getNotesByPerson(Long id) {
-        User user = personRepository.getOne(id);
-        return user.getNotes();
-    }*/
-
 }

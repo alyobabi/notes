@@ -1,21 +1,12 @@
 package com.epam.notes.controller;
 
 import com.epam.notes.entity.Note;
-import com.epam.notes.repository.NoteRepository;
 import com.epam.notes.service.NoteService;
+import com.epam.notes.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.*;
-import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -24,26 +15,26 @@ public class NoteController {
     @Autowired
     private NoteService noteService;
     @Autowired
-    private NoteRepository noteRepository;
+    private PersonService personService;
 
     @GetMapping("/getNotes")
-    public List<Note> getNotes() {
-        return noteService.getNotes();
+    public List<Note> getNotes(Authentication authentication) {
+        return noteService.getNotes(authentication);
     }
 
     @PostMapping("/createNote")
-    public void createNote(@RequestBody Note note) {
-        noteService.createNote(note);
+    public void createNote(@RequestBody Note note, Authentication authentication) {
+        noteService.createNote(note, authentication);
     }
 
-    @PostMapping("/editNote")
-    public void editNote(@RequestBody Note note) {
-        noteService.editNote(note);
+    @PostMapping("/saveNote")
+    public void editNote(@RequestBody Note note, Authentication authentication) {
+        noteService.saveNote(note, authentication);
     }
 
     @DeleteMapping("/deleteNote/{id}")
-    public void deleteNote(@PathVariable Long id) {
-        noteService.deleteNote(id);
+    public void deleteNote(@PathVariable Long id, Authentication authentication) {
+        noteService.deleteNote(id, authentication);
     }
 
 //    @PostMapping("/exportNote")
@@ -71,7 +62,6 @@ public class NoteController {
 //
 //        return new ResponseEntity<>(resource, respHeaders, HttpStatus.OK);
 //    }
-
 
 
 }

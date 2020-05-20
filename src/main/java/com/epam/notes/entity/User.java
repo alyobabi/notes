@@ -1,6 +1,5 @@
-package com.epam.notes.config;
+package com.epam.notes.entity;
 
-import com.epam.notes.repository.PersonRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

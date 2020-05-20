@@ -91,19 +91,19 @@ public class Note {
         this.deleted = deleted;
     }
 
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
+    }
+
     public Set<Person> getOtherUsers() {
         return otherUsers;
     }
 
-    public void setOtherUsers(Person user) {
-        otherUsers.add(user);
-    }
-
-    public Person getUser() {
-        return person;
-    }
-
-    public void setMyUser(Person user) {
-        this.person = user;
+    public void setOtherUsers(Set<Person> otherUsers) {
+        this.otherUsers = otherUsers;
     }
 }

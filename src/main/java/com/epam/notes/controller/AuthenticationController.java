@@ -2,16 +2,12 @@ package com.epam.notes.controller;
 
 
 import com.epam.notes.entity.Person;
-import com.epam.notes.repository.PersonRepository;
-import com.epam.notes.service.UserService;
+import com.epam.notes.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -22,7 +18,7 @@ import javax.servlet.http.HttpSession;
 @RestController
 public class AuthenticationController {
     @Autowired
-    private PersonRepository personRepository;
+    private PersonService personService;
 
     @GetMapping("/logout")
     public LoginResponse logout(HttpServletRequest request,
@@ -34,30 +30,28 @@ public class AuthenticationController {
     }
 
     @PostMapping(value = "/login", produces = {"application/json"})
-    public LoginResponse login(/*@RequestParam String name,
-                               @RequestParam String password,*/
-            HttpServletRequest request,
-            HttpServletResponse response) throws ServletException {
-        return new LoginResponse(5, "lala");
-        /*if (login == null || password == null) {
+    public LoginResponse login(@RequestBody Person user,
+                               HttpServletRequest request,
+                               HttpServletResponse response) throws ServletException {
+        if (user.getName() == null || user.getPassword() == null) {
             return fail(response, request);
         }
         try {
-            Person person = personRepository.getPersonByName(login);
+            Person person = personService.getPersonByName(user.getName());
             if (person == null) return fail(response, request);
             if (request.getRemoteUser() != null) {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 if (authentication != null)
                     new SecurityContextLogoutHandler().logout(request, response, authentication);
             }
-            request.login(login, password);
+            request.login(user.getName(), user.getPassword());
             this.setCookies(response, request);
             return new LoginResponse(HttpServletResponse.SC_OK, "Authorized");
         } catch (ServletException e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             this.killCookies(response, request);
-            return new LoginResponse(response.getStatus(), "Una");
-        }*/
+            return new LoginResponse(response.getStatus(), "Unauthorized");
+        }
     }
 
     private LoginResponse fail(HttpServletResponse response, HttpServletRequest request) {
@@ -67,12 +61,11 @@ public class AuthenticationController {
     }
 
     private void setCookies(HttpServletResponse response, HttpServletRequest request) {
-        //todo
         HttpSession httpSession = request.getSession();
         Cookie cookie = new Cookie("JSESSIONID", httpSession.getId());
         cookie.setHttpOnly(false);
         cookie.setSecure(false);
-        cookie.setPath("/notes");
+        cookie.setPath("/");
         response.addCookie(cookie);
     }
 
@@ -102,44 +95,4 @@ public class AuthenticationController {
             return message;
         }
     }
-//    @Autowired
-//    UserService userService;
-//
-//    @GetMapping("/login")
-//    public ModelAndView login() {
-//        ModelAndView modelAndView = new ModelAndView();
-//        modelAndView.setViewName("login");
-//        return modelAndView;
-//    }
-//
-//    @GetMapping("/notes")
-//    public ModelAndView home() {
-//        ModelAndView modelAndView = new ModelAndView();
-//        modelAndView.setViewName("notes");
-//        return modelAndView;
-//    }
-//
-//    @GetMapping("/register")
-//    public ModelAndView register() {
-//        ModelAndView modelAndView = new ModelAndView();
-//        Person person = new Person();
-//        modelAndView.addObject("person", person);
-//        modelAndView.setViewName("register");
-//        return modelAndView;
-//    }
-//
-//    @PostMapping("/register")
-//    public ModelAndView registerUser(Person person, BindingResult bindingResult, ModelMap modelMap) {
-//        ModelAndView modelAndView = new ModelAndView();
-//        if (bindingResult.hasErrors()) {
-//            modelAndView.addObject("successMessage", "correct errors");
-//            modelMap.addAttribute("bindingResult", bindingResult);
-//        } else {
-//            userService.saveUser(person);
-//            modelAndView.addObject("successMessage", "Success!");
-//        }
-//        modelAndView.addObject("person", person);
-//        modelAndView.setViewName("register");
-//        return modelAndView;
-//    }
 }
