@@ -2,34 +2,28 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <title>Sign up</title>
-<!-- link rel="stylesheet" type="text/css" th:href="@{/css/registration.css}" /-->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
-<body style="background-color: #ededed;">
-	<div style="background-color: #337ab7; height: 50px;"></div>
-	<div class="container-fluid" style="margin-top: 30px;">
-
-		<div class="row col-lg-4 col-lg-offset-4" style="margin-top: 40px; background-color: #fff; padding: 20px; border: solid 1px #ddd;">
-			<form autocomplete="off" action="#" th:action="@{/register}" th:object="${person}" method="post" class="form-signin" role="form">
-				<h3 class="form-signin-heading">Registration Form</h3>
+<body style="background-color: #ffe8ef;">
+	<div style="background-color: #ff9cba; height: 40px;"></div>
+	<div class="container-fluid">
+		<div class="row col-lg-4 col-lg-offset-4" style="margin-top: 40px; background-color: #fff; padding: 20px; border: solid 5px #fff000;">
+			<form autocomplete="on" action="#" th:action="@{/register}" th:object="${person}" method="post" class="form-signin">
+				<h3 class="form-signin-heading">Sign up</h3>
 				<div class="form-group">
-					<div class="">
 						<input type="text" th:field="*{name}" placeholder="Name" class="form-control" />
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="">
+
 						<input type="password" th:field="*{password}" placeholder="Password" class="form-control" />
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="">
-						<button type="submit" class="btn btn-primary btn-block">Register User</button>
-					</div>
+
+						<button type="submit" class="btn btn-primary btn-success">Sign up</button>
+
 				</div>
 				<span th:utext="${successMessage}"></span>
+			</form>
+			<form th:action="@{/login}" method="GET" class="form-signup">
+				<button class="btn btn-primary" name="Submit" value="Login" type="Submit" th:text="Login"></button>
 			</form>
 		</div>
 	</div>

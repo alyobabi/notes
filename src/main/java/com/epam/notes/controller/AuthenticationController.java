@@ -47,7 +47,7 @@ public class AuthenticationController {
             modelMap.addAttribute("bindingResult", bindingResult);
         } else {
             userService.saveUser(person);
-            modelAndView.addObject("successMessage", "success");
+            modelAndView.addObject("successMessage", "Success!");
         }
         modelAndView.addObject("person", person);
         modelAndView.setViewName("register");
