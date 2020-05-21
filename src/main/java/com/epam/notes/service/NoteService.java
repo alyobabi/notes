@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -101,6 +102,30 @@ public class NoteService {
             while ((i = fis.read(buffer)) > 0) out.write(buffer, 0, i);
             out.flush();
         }
+    }
+
+    public void download1(HttpServletResponse response, Note note) throws IOException {
+        String path = String.format("%s.json", note.getTitle());
+        response.setContentType("application/json");
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setIntHeader("Expires", 0);
+        response.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" +
+                path);
+        //response.setContentLengthLong(file.length());
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+        objectOutputStream.writeObject(note);
+        objectOutputStream.flush();
+        objectOutputStream.close();
+        InputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+        ServletOutputStream outputStream = response.getOutputStream();
+//        StreamUtils.copy(inputStream, outputStream);
+        int i;
+        byte[] buffer = new byte[1024];
+        while ((i = inputStream.read(buffer)) > 0) outputStream.write(buffer, 0, i);
+        outputStream.flush();
+
     }
 
 

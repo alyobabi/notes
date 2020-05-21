@@ -1,6 +1,7 @@
 package com.epam.notes.controller;
 
 import com.epam.notes.entity.Note;
+import com.epam.notes.repository.NoteRepository;
 import com.epam.notes.service.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -14,6 +15,8 @@ import java.util.List;
 public class NoteController {
     @Autowired
     private NoteService noteService;
+    @Autowired
+    private NoteRepository noteRepository;
 
     @GetMapping("/getNotes")
     public List<Note> getNotes(Authentication authentication) {
@@ -39,7 +42,8 @@ public class NoteController {
     public void exportNote(@PathVariable Long id,
                            HttpServletResponse response,
                            Authentication authentication) throws Exception {
-        noteService.exportNote(id, response, authentication);
+        //noteService.exportNote(id, response, authentication);
+        noteService.download1(response, noteRepository.getOne(id));
     }
 
     //it is the same DELETE LATER
