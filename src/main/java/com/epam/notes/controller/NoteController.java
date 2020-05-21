@@ -2,11 +2,11 @@ package com.epam.notes.controller;
 
 import com.epam.notes.entity.Note;
 import com.epam.notes.service.NoteService;
-import com.epam.notes.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
@@ -14,8 +14,6 @@ import java.util.List;
 public class NoteController {
     @Autowired
     private NoteService noteService;
-    @Autowired
-    private PersonService personService;
 
     @GetMapping("/getNotes")
     public List<Note> getNotes(Authentication authentication) {
@@ -37,31 +35,20 @@ public class NoteController {
         noteService.deleteNote(id, authentication);
     }
 
-//    @PostMapping("/exportNote")
-//    public void exportNote(@RequestBody Note note) throws Exception {
-//        noteService.exportNote(json);
-//    }
+    @GetMapping("/exportNote/{id}")
+    public void exportNote(@PathVariable Long id,
+                           HttpServletResponse response,
+                           Authentication authentication) throws Exception {
+        noteService.exportNote(id, response, authentication);
+    }
 
-    //@GetMapping("/importNote")
+    //it is the same DELETE LATER
+    @PostMapping("/importNote")
+    public void importNote(@RequestBody Note note, Authentication authentication) {
+        noteService.createNote(note, authentication);
+    }
 
-//@GetMapping("/downloadFile/{id}")
-//    public ResponseEntity<InputStreamResource> downloadFile(@PathVariable Long id, HttpServletRequest request) throws Exception {
-//        Note note = noteRepository.getOne(id);
-//        byte[] content = IOUtils.toByteArray(object.getObjectContent());
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        ObjectOutputStream oos = new ObjectOutputStream(baos);
-//        oos.writeObject(note);
-//        oos.flush();
-//        oos.close();
-//        InputStream is = new ByteArrayInputStream(baos.toByteArray());
-//        InputStreamResource resource = new InputStreamResource(is);
-//        HttpHeaders respHeaders = new HttpHeaders();
-//        respHeaders.setContentType(MediaType.valueOf("application/pdf"));
-//        respHeaders.setContentLength(resource.contentLength());
-//        respHeaders.setContentDispositionFormData("attachment", "fileNameIwant.pdf");
-//
-//        return new ResponseEntity<>(resource, respHeaders, HttpStatus.OK);
-//    }
+
 
 
 }
