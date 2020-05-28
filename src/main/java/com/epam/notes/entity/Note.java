@@ -1,15 +1,20 @@
 package com.epam.notes.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.data.relational.core.mapping.Table;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.*;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+@Data
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
-@Table("note")
+@Table(name = "note"/*, uniqueConstraints = @UniqueConstraint(columnNames = {"id", "dateEdited"})*/)
 public class Note implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +26,7 @@ public class Note implements Serializable {
     @Column
     private boolean deleted;
 
-    @Column
+    @Column(length = 5000)
     private String text;
 
     @Column
@@ -36,75 +41,6 @@ public class Note implements Serializable {
     private Person person;
 
     @JsonIgnore
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "note_person",
-            joinColumns = @JoinColumn(name = "note_id"),
-            inverseJoinColumns = @JoinColumn(name = "person_id")
-    )
-    private Set<Person> otherUsers = new HashSet<>();
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public LocalDateTime getDateCreated() {
-        return dateCreated;
-    }
-
-    public void setDateCreated(LocalDateTime dateCreated) {
-        this.dateCreated = dateCreated;
-    }
-
-    public LocalDateTime getDateEdited() {
-        return dateEdited;
-    }
-
-    public void setDateEdited(LocalDateTime dateEdited) {
-        this.dateEdited = dateEdited;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    public Person getPerson() {
-        return person;
-    }
-
-    public void setPerson(Person person) {
-        this.person = person;
-    }
-
-    public Set<Person> getOtherUsers() {
-        return otherUsers;
-    }
-
-    public void setOtherUsers(Set<Person> otherUsers) {
-        this.otherUsers = otherUsers;
-    }
+    @OneToMany(mappedBy = "note")
+    private Set<NoteSharing> noteSharing = new HashSet<>();
 }

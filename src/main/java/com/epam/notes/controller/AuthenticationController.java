@@ -1,6 +1,5 @@
 package com.epam.notes.controller;
 
-
 import com.epam.notes.entity.Person;
 import com.epam.notes.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 @RestController
+@RequestMapping("/api")
 public class AuthenticationController {
     @Autowired
     private PersonService personService;

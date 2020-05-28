@@ -25,7 +25,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder.userDetailsService(new UserService(personRepository));
-                //.passwordEncoder(passwordEncoder());
     }
 
     @Override
@@ -35,10 +34,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/registration").permitAll()
                 .antMatchers("/notes/**").authenticated()
                 .and()
-//                .headers().frameOptions().sameOrigin()
-//                .and()
                 .csrf().disable();
     }
-
-
 }

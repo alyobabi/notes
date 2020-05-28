@@ -1,22 +1,33 @@
 package com.epam.notes.controller;
 
 import com.epam.notes.entity.Note;
-import com.epam.notes.repository.NoteRepository;
+import com.epam.notes.entity.NoteHistory;
 import com.epam.notes.service.NoteService;
+import com.epam.notes.service.PersonService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/notes")
+@RequestMapping("/api/notes")
 public class NoteController {
     @Autowired
     private NoteService noteService;
     @Autowired
-    private NoteRepository noteRepository;
+    private PersonService personService;
+
+    @GetMapping("/getNote/{id}")
+    public Note getNote(@PathVariable Long id, Authentication authentication) {
+        return noteService.getNote(id, authentication);
+    }
 
     @GetMapping("/getNotes")
     public List<Note> getNotes(Authentication authentication) {
@@ -24,13 +35,18 @@ public class NoteController {
     }
 
     @PostMapping("/createNote")
-    public void createNote(@RequestBody Note note, Authentication authentication) {
-        noteService.createNote(note, authentication);
+    public Note createNote(@RequestBody Note note, Authentication authentication) {
+        return noteService.createNote(note, authentication);
+    }
+
+    @PostMapping("/notSave")
+    public Note notSave(@RequestBody Note note) {
+        return noteService.notSaveNote(note);
     }
 
     @PostMapping("/saveNote")
-    public void editNote(@RequestBody Note note, Authentication authentication) {
-        noteService.saveNote(note, authentication);
+    public Note saveNote(@RequestBody Note note, Authentication authentication) {
+        return noteService.saveNote(note, authentication);
     }
 
     @DeleteMapping("/deleteNote/{id}")
@@ -41,18 +57,38 @@ public class NoteController {
     @GetMapping("/exportNote/{id}")
     public void exportNote(@PathVariable Long id,
                            HttpServletResponse response,
-                           Authentication authentication) throws Exception {
-        //noteService.exportNote(id, response, authentication);
-        noteService.download1(response, noteRepository.getOne(id));
+                           Authentication authentication) throws IOException {
+        noteService.download(id, response, authentication);
     }
 
-    //it is the same DELETE LATER
+    @GetMapping("/getHistory/{id}")
+    public List<NoteHistory> getHistory(@PathVariable Long id,
+                                        Authentication authentication) throws IOException {
+        return noteService.getHistory(id, authentication);
+    }
+
     @PostMapping("/importNote")
-    public void importNote(@RequestBody Note note, Authentication authentication) {
-        noteService.createNote(note, authentication);
+    public void importNote(@RequestParam("file") MultipartFile file,
+                           Authentication authentication) throws IOException {
+        noteService.importNote(file, authentication);
     }
 
+    @PostMapping("/shareNote")
+    public void shareNote(@RequestParam String name,
+                          @RequestParam Long id,
+                          @RequestParam String rights,
+                          Authentication authentication) {
+        noteService.shareNote(name, id, rights, authentication);
+    }
 
+    @GetMapping("/getAlienNotesToRead")
+    public List<Note> getAlienNotesToRead(Authentication authentication) {
+        return personService.getAlienNotesToRead(authentication);
+    }
 
+    @GetMapping("/getAlienNotesToWrite")
+    public List<Note> getAlienNotesToWrite(Authentication authentication) {
+        return personService.getAlienNotesToWrite(authentication);
+    }
 
 }
