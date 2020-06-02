@@ -1,12 +1,15 @@
 package com.epam.notes.entity;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.relational.core.mapping.Table;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
-@Data
+@Getter
+@Setter
 @Table("share")
 @Entity
 public class NoteSharing implements Serializable {

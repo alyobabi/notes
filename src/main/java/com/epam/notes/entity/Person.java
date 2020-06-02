@@ -2,6 +2,8 @@ package com.epam.notes.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.relational.core.mapping.Table;
 
 import javax.persistence.*;
@@ -11,7 +13,8 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table("person")
 public class Person implements Serializable {

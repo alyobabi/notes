@@ -45,15 +45,14 @@ public class NoteService {
     }
 
     public Note notSaveNote(Note note) {
-        //add
         webSocketService.sendNewText(note.getText(), note.getId());
         return note;
     }
 
     public Note saveNote(Note noteFromClient, Authentication authentication) {
         Note note = noteRepository.getOne(noteFromClient.getId());
-        if (!note.getText().isEmpty() ) {
-            //todo delete this block ->
+        if (!note.getText().isEmpty()) {
+            //todo delete this block:
             // change db ->
             // refactor this method (how to saveEdit??)
             NoteHistory noteHistory = new NoteHistory();
@@ -67,9 +66,7 @@ public class NoteService {
         note.setDateEdited(LocalDateTime.now());
         note.setTitle(noteFromClient.getTitle());
         note.setText(noteFromClient.getText());
-        noteRepository.save(note);
-//        webSocketService.sendNewText(note.getText(), note.getId());
-        return note;
+        return noteRepository.save(note);
     }
 
     public void deleteNote(Long id, Authentication authentication) {
@@ -132,18 +129,22 @@ public class NoteService {
         response.setIntHeader("Expires", 0);
         response.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" +
                 path);
-        InputStream inputStream = IOUtils.toInputStream(jsonString);
+        InputStream inputStream = new BufferedInputStream(IOUtils.toInputStream(jsonString));
         ServletOutputStream outputStream = response.getOutputStream();
         int i;
         byte[] buffer = new byte[1024];
-        while ((i = inputStream.read(buffer)) > 0) outputStream.write(buffer, 0, i);
-        outputStream.flush();
+        while ((i = inputStream.read(buffer)) > 0) {
+            outputStream.write(buffer, 0, i);
+            outputStream.flush();
+        }
         outputStream.close();
     }
 
     public void shareNote(String namePerson, Long idNote, String rights, Authentication authentication) {
         Note note = noteRepository.getOne(idNote);
         Person person = personService.getPersonByName(namePerson);
+        if (person == null) throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, "You can't share note with nonexistent user");
         checkAuthentication(authentication, note, false);
         NoteSharing noteSharing = new NoteSharing();
         noteSharing.setPerson(person);
